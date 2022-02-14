@@ -1,0 +1,13 @@
+compatibility_level = 3.6
+biff = no
+maillog_file = /dev/stdout
+alias_maps = inline:{postmaster=root}
+
+inet_interfaces = all
+mynetworks = 127.0.0.0/8 [::1]/128 172.16.0.0/12
+relayhost = [smtp.sendgrid.net]:2525
+
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = static:apikey:PASS_VIA_ENV
+smtp_sasl_security_options = noanonymous
+smtp_tls_security_level = encrypt
