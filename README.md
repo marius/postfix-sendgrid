@@ -1,5 +1,7 @@
 # Postfix to sendgrid mail relay
 
+[![Docker](https://github.com/marius/postfix-sendgrid/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/marius/postfix-sendgrid/actions/workflows/docker-publish.yml)
+
 Very simple mail relay, just set the APIKEY environment variable and you should
 be good to go.
 
@@ -11,14 +13,14 @@ want to run this container exposed to the internet.
 ## Docker run
 
 ```
-docker run -d -e APIKEY=YOUR_KEY -p 25:25 marius2/postfix-sendgrid
+docker run -d -e APIKEY=YOUR_KEY -p 25:25 ghcr.io/marius/postfix-sendgrid
 ```
 
 ## Docker compose
 
 ```
   mailrelay:
-    image: marius2/postfix-sendgrid
+    image: ghcr.io/marius/postfix-sendgrid
     environment:
       APIKEY: YOUR_KEY
     ports:
