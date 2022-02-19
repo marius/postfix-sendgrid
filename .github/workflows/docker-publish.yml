@@ -34,15 +34,16 @@ jobs:
       id-token: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
       - name: Check if we have to do all this
         id: check
         uses: twiddler/is-my-docker-parent-image-out-of-date@fd8a50affce1f23efb83bd37647731cdb1143a0d
         with:
           parent-image: alpine:latest
           my-image: ghcr.io/marius/postfix-sendgrid
+
+      - name: Checkout repository
+        if: steps.check.outputs.out-of-date == 'true'
+        uses: actions/checkout@v2
 
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
@@ -55,6 +56,7 @@ jobs:
 
       # Workaround: https://github.com/docker/build-push-action/issues/461
       - name: Setup Docker buildx
+        if: steps.check.outputs.out-of-date == 'true'
         uses: docker/setup-buildx-action@79abd3f86f79a9d68a23c75a09a9a85889262adf
 
       # Login against a Docker registry except on PR
@@ -70,15 +72,16 @@ jobs:
       # Extract metadata (tags, labels) for Docker
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
+        if: steps.check.outputs.out-of-date == 'true'
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-        if: steps.check.outputs.out-of-date == 'true'
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
+        if: steps.check.outputs.out-of-date == 'true'
         id: build-and-push
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
@@ -86,7 +89,6 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ghcr.io/marius/postfix-sendgrid:latest
           labels: ${{ steps.meta.outputs.labels }}
-        if: steps.check.outputs.out-of-date == 'true'
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
