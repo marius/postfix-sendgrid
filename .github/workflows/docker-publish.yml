@@ -53,4 +53,6 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/marius/postfix-sendgrid:latest
-          labels: ${{ steps.meta.outputs.labels }}
+          labels: |
+            ${{ steps.meta.outputs.labels }}
+            postfix-package-version=3.7.0-r2
