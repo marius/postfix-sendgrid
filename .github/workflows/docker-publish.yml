@@ -18,7 +18,7 @@ jobs:
       packages: write
 
     steps:
-      - name: Check if we have to do all this
+      - name: Check if there is a new base image
         if: github.event_name != 'push'
         id: check
         uses: twiddler/is-my-docker-parent-image-out-of-date@fd8a50affce1f23efb83bd37647731cdb1143a0d
@@ -26,11 +26,34 @@ jobs:
           parent-image: alpine:latest
           my-image: ghcr.io/marius/postfix-sendgrid
 
+      - name: Check if there is a new postfix package
+        if: github.event_name != 'push'
+        id: check-package
+        run: |
+          echo ${{github.event_name}}
+          sudo apt install -y curl jq unzip gnupg
+          . /etc/os-release
+          echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" >/etc/apt/sources.list.d/s.list
+          curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key | apt-key add -
+          apt update
+          apt install -y skopeo
+          curl -L -o pup.zip https://github.com/ericchiang/pup/releases/download/v0.4.0/pup_v0.4.0_linux_amd64.zip
+          unzip pup.zip
+          package_version=$(curl -s https://pkgs.alpinelinux.org/package/edge/main/x86_64/postfix | ./pup 'th:contains("Version") + td strong a text{}')
+
+          container_version=$(skopeo inspect docker://ghcr.io/marius/postfix-sendgrid | jq -r '.Labels."postfix-package-version"')
+          echo "::set-output name=version::${package_version}"
+          if [ "${container_version}" == "${package_version}" ]; then
+            echo "::set-output name=new::false"
+          else
+            echo "::set-output name=new::true"
+          fi
+
       - name: Checkout repository
-        if: steps.check.outputs.out-of-date == 'true' || github.event_name == 'push'
+        if: steps.check.outputs.out-of-date == 'true' || steps.check-package.outputs.new == 'true' || github.event_name == 'push'
         uses: actions/checkout@v2
 
-      - name: Log into registry ${{ env.REGISTRY }}
+      - name: Log into registry
         if: steps.check.outputs.out-of-date == 'true' || github.event_name == 'push'
         uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
         with:
@@ -39,14 +62,14 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract Docker metadata
-        if: steps.check.outputs.out-of-date == 'true' || github.event_name == 'push'
+        if: steps.check.outputs.out-of-date == 'true' || steps.check-package.outputs.new == 'true' || github.event_name == 'push'
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image
-        if: steps.check.outputs.out-of-date == 'true' || github.event_name == 'push'
+        if: steps.check.outputs.out-of-date == 'true' || steps.check-package.outputs.new == 'true' || github.event_name == 'push'
         id: build-and-push
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
@@ -55,4 +78,4 @@ jobs:
           tags: ghcr.io/marius/postfix-sendgrid:latest
           labels: |
             ${{ steps.meta.outputs.labels }}
-            postfix-package-version=3.7.0-r2
+            postfix-package-version=${{ steps.check-package.outputs.version }}
