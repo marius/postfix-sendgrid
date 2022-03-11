@@ -26,8 +26,7 @@ jobs:
           parent-image: alpine:latest
           my-image: ghcr.io/marius/postfix-sendgrid
 
-      - name: Check if there is a new postfix package
-        if: github.event_name != 'push'
+      - name: Get the postfix package version
         id: check-package
         run: |
           echo ${{github.event_name}}
