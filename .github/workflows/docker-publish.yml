@@ -53,7 +53,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Log into registry
-        if: steps.check.outputs.out-of-date == 'true' || github.event_name == 'push'
+        if: steps.check.outputs.out-of-date == 'true' || steps.check-package.outputs.new == 'true' || github.event_name == 'push'
         uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
         with:
           registry: ${{ env.REGISTRY }}
