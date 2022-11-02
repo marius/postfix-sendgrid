@@ -56,6 +56,7 @@ container# ruby -r net/smtp -e 'Net::SMTP.start("host.docker.internal") { |s| s.
       WATCHTOWER_NOTIFICATION_EMAIL_FROM: watchtower@example.com
       WATCHTOWER_NOTIFICATION_EMAIL_SERVER: host.docker.internal
       WATCHTOWER_NOTIFICATION_EMAIL_SERVER_TLS_SKIP_VERIFY: "true"
+      WATCHTOWER_NOTIFICATION_EMAIL_DELAY: 120
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     extra_hosts:
