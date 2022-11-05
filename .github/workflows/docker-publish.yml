@@ -71,7 +71,7 @@ jobs:
       - name: Build and push Docker image
         if: steps.check.outputs.out-of-date == 'true' || steps.check-package.outputs.new == 'true' || github.event_name == 'push'
         id: build-and-push
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        uses: docker/build-push-action@v3
         with:
           context: .
           push: true
