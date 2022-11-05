@@ -51,7 +51,7 @@ jobs:
 
       - name: Checkout repository
         if: steps.check.outputs.out-of-date == 'true' || steps.check-package.outputs.new == 'true' || github.event_name == 'push'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Log into registry
         if: steps.check.outputs.out-of-date == 'true' || steps.check-package.outputs.new == 'true' || github.event_name == 'push'
