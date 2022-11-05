@@ -30,6 +30,7 @@ jobs:
       - name: Get the postfix package version
         id: check-package
         run: |
+          set -x
           sudo apt install -y curl jq unzip gnupg
           . /etc/os-release
           echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/s.list
@@ -38,6 +39,7 @@ jobs:
           sudo apt install -y skopeo
           curl -L -o pup.zip https://github.com/ericchiang/pup/releases/download/v0.4.0/pup_v0.4.0_linux_amd64.zip
           unzip pup.zip
+          echo "7e285aef7140609dcfe94153d6ee412fd9ea3a5b804670e1c772a75150ab711d pup" | sha256sum --check --status
           package_version=$(curl -s https://pkgs.alpinelinux.org/package/edge/main/x86_64/postfix | ./pup 'th:contains("Version") + td strong a text{}')
 
           container_version=$(skopeo inspect docker://ghcr.io/marius/postfix-sendgrid | jq -r '.Labels."postfix-package-version"')
