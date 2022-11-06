@@ -22,7 +22,7 @@ jobs:
       - name: Check if there is a new base image
         if: github.event_name != 'push'
         id: check
-        uses: twiddler/is-my-docker-parent-image-out-of-date@fd8a50affce1f23efb83bd37647731cdb1143a0d
+        uses: twiddler/is-my-docker-parent-image-out-of-date@v1
         with:
           parent-image: alpine:latest
           my-image: ghcr.io/marius/postfix-sendgrid
