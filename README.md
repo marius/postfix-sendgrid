@@ -62,3 +62,5 @@ container# ruby -r net/smtp -e 'Net::SMTP.start("host.docker.internal") { |s| s.
     extra_hosts:
       - host.docker.internal:host-gateway
 ```
+
+The delay is important, otherwise Watchtower might not be able to send emails.
