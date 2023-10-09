@@ -27,6 +27,24 @@ docker run -d -e APIKEY=YOUR_KEY -p 25:25 ghcr.io/marius/postfix-sendgrid
       - "25:25"
 ```
 
+Using a secret:
+
+```
+secrets:
+  sendgrid_apikey:
+    file: /tank/docker/secrets/sendgrid_apikey
+
+services:
+  mailrelay:
+    image: ghcr.io/marius/postfix-sendgrid
+    environment:
+      APIKEY_FILE: /run/secrets/sendgrid_apikey
+    ports:
+      - "25:25"
+    secrets:
+      - sendgrid_apikey
+```
+
 ## Testing
 
 On the host:
