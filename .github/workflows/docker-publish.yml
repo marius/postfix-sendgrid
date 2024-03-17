@@ -22,11 +22,14 @@ jobs:
       - name: Check if there is a new base image
         if: github.event_name != 'push'
         id: check
-        uses: twiddler/is-my-docker-parent-image-out-of-date@v1
-        with:
-          parent-image: alpine:latest
-          my-image: ghcr.io/marius/postfix-sendgrid
-
+        run: |
+          set -Eeuxo pipefail
+          sudo apt install -y curl jq skopeo
+          PARENT=$(skopeo inspect docker://alpine:latest | jq .Layers)
+          OWN=$(skopeo inspect docker://ghcr.io/marius/postfix-sendgrid | jq .Layers)
+          OUTOFDATE=$(jq -cn "$OWN - ($OWN - $PARENT) | .==[]")
+          echo "out-of-date=$OUTOFDATE" >> $GITHUB_OUTPUT
+        
       - name: Get the postfix package version
         id: check-package
         run: |
