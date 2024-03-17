@@ -69,6 +69,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Set up Docker Buildx
+        if: steps.check.outputs.out-of-date == 'true' || steps.check-package.outputs.new == 'true' || github.event_name == 'push'
         uses: docker/setup-buildx-action@v3
 
       - name: Build and push Docker image
