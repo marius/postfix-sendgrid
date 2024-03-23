@@ -5,6 +5,10 @@
 Very simple mail relay, just set the APIKEY environment variable and you should
 be good to go.
 
+This Docker image automatically updates whenever there is an update to the
+underlying Alpine image and/or Postfix is updated in the Alpine package repository.
+(See https://github.com/marius/postfix-sendgrid/actions)
+
 Heavily inspired by alterrebe/docker-mail-relay and simenduev/postfix-relay.
 
 NOTE: This assumes the host is running behind a firewall, you probably don't
