@@ -11,8 +11,9 @@ underlying Alpine image and/or Postfix is updated in the Alpine package reposito
 
 Heavily inspired by alterrebe/docker-mail-relay and simenduev/postfix-relay.
 
-NOTE: This assumes the host is running behind a firewall, you probably don't
-want to run this container exposed to the internet.
+> [!WARNING]
+> This assumes the host is running behind a firewall, you probably don't
+> want to run this container exposed to the internet.
 
 ## Docker run
 
