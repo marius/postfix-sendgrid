@@ -47,7 +47,7 @@ jobs:
           fi
 
       - name: Install dependencies
-        run: sudo apt install -y buildah
+        run: sudo apt install -y buildah podman
 
       - name: Checkout repository
         if: steps.check.outputs.out-of-date == 'true' || steps.check-package.outputs.new == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
