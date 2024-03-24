@@ -46,6 +46,9 @@ jobs:
             echo "new=true" >> $GITHUB_OUTPUT
           fi
 
+          - name: Install dependencies
+        run: sudo apt install -y buildah
+
       - name: Checkout repository
         if: steps.check.outputs.out-of-date == 'true' || steps.check-package.outputs.new == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         uses: actions/checkout@v4
