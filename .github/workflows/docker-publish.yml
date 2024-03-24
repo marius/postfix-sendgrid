@@ -25,9 +25,9 @@ jobs:
           OWN=$(skopeo inspect docker://ghcr.io/marius/postfix-sendgrid | jq .Layers)
           OUTOFDATE=$(jq -cn "$OWN - ($OWN - $PARENT) | .==[]")
           echo "out-of-date=$OUTOFDATE" >> $GITHUB_OUTPUT
-        
+
+        # This action needs to run every time to set the package version.        
       - name: Get the postfix package version
-        if: github.event_name != 'push' && github.event_name != 'workflow_dispatch'
         id: check-package
         run: |
           set -Eeuxo pipefail
@@ -46,9 +46,6 @@ jobs:
             echo "new=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Install dependencies
-        run: sudo apt install -y buildah podman
-
       - name: Checkout repository
         if: steps.check.outputs.out-of-date == 'true' || steps.check-package.outputs.new == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         uses: actions/checkout@v4
@@ -61,7 +58,7 @@ jobs:
           images: ghcr.io/marius/postfix-sendgrid
 
       - name: Build image
-        if: steps.check.outputs.out-of-date == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        if: steps.check.outputs.out-of-date == 'true' || steps.check-package.outputs.new == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         id: build
         uses: redhat-actions/buildah-build@v2
         with:
@@ -74,8 +71,7 @@ jobs:
             postfix-package-version=${{ steps.check-package.outputs.version }}
 
       - name: Push to ghcr.io
-        if: steps.check.outputs.out-of-date == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-        id: push
+        if: steps.check.outputs.out-of-date == 'true' || steps.check-package.outputs.new == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         uses: redhat-actions/push-to-registry@v2
         with:
           image: ${{ steps.build.outputs.image }}
