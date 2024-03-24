@@ -7,7 +7,7 @@ be good to go.
 
 This Docker image automatically updates whenever there is an update to the
 underlying Alpine image and/or Postfix is updated in the Alpine package repository.
-(See https://github.com/marius/postfix-sendgrid/actions)
+(See https://github.com/marius/postfix-sendgrid/actions for how this is implemented)
 
 Heavily inspired by alterrebe/docker-mail-relay and simenduev/postfix-relay.
 
