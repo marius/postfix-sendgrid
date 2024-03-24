@@ -46,7 +46,7 @@ jobs:
             echo "new=true" >> $GITHUB_OUTPUT
           fi
 
-          - name: Install dependencies
+      - name: Install dependencies
         run: sudo apt install -y buildah
 
       - name: Checkout repository
