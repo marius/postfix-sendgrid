@@ -20,7 +20,6 @@ jobs:
         id: check
         run: |
           set -Eeuxo pipefail
-          sudo apt install -y curl jq skopeo
           PARENT=$(skopeo inspect docker://alpine:latest | jq .Layers)
           OWN=$(skopeo inspect docker://ghcr.io/marius/postfix-sendgrid | jq .Layers)
           OUTOFDATE=$(jq -cn "$OWN - ($OWN - $PARENT) | .==[]")
@@ -31,7 +30,6 @@ jobs:
         id: check-package
         run: |
           set -Eeuxo pipefail
-          sudo apt install -y curl jq libarchive-tools gnupg skopeo
           if [ ! -x pup ]; then
             curl -sS -L https://github.com/ericchiang/pup/releases/download/v0.4.0/pup_v0.4.0_linux_amd64.zip | bsdtar -xvf -
             chmod +x pup
