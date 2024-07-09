@@ -31,7 +31,8 @@ jobs:
         run: |
           set -Eeuxo pipefail
           if [ ! -x pup ]; then
-            curl -sS -L https://github.com/ericchiang/pup/releases/download/v0.4.0/pup_v0.4.0_linux_amd64.zip | bsdtar -xvf -
+            curl -L -o pup.zip https://github.com/ericchiang/pup/releases/download/v0.4.0/pup_v0.4.0_linux_amd64.zip
+            unzip pup.zip
             chmod +x pup
           fi
           echo "7e285aef7140609dcfe94153d6ee412fd9ea3a5b804670e1c772a75150ab711d pup" | sha256sum --check --status
