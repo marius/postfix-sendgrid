@@ -36,7 +36,7 @@ jobs:
             chmod +x pup
           fi
           echo "7e285aef7140609dcfe94153d6ee412fd9ea3a5b804670e1c772a75150ab711d pup" | sha256sum --check --status
-          package_version=$(curl -s https://pkgs.alpinelinux.org/package/edge/main/x86_64/postfix | ./pup 'th:contains("Version") + td strong a text{}')
+          package_version=$(curl -s https://pkgs.alpinelinux.org/package/edge/main/x86_64/postfix | ./pup 'th:contains("Version") + td strong text{}')
           container_version=$(skopeo inspect docker://ghcr.io/marius/postfix-sendgrid | jq -r '.Labels."postfix-package-version"')
           echo "version=${package_version}" >> $GITHUB_OUTPUT
           if [ "${container_version}" == "${package_version}" ]; then
